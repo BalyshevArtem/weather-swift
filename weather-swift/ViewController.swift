@@ -8,12 +8,46 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class RootViewController: UIViewController, UISearchResultsUpdating {
 
+    var timer: Timer = Timer()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        
+        self.setupRootVC()
     }
+    
+    private func setupRootVC() {
+        self.navigationItem.title = "weather-swift"
+        self.navigationController?.navigationBar.prefersLargeTitles = true
+        
+        let searchController = UISearchController(searchResultsController: nil)
+        searchController.searchResultsUpdater = self
+        
+        self.navigationItem.searchController = searchController
+        self.navigationItem.hidesSearchBarWhenScrolling = false
+        
+    }
+    
+    //MARK: - UISearchResultsUpdating
+    func updateSearchResults(for searchController: UISearchController) {
+        let city = searchController.searchBar.text!
+        
+        guard city != "" else {
+            return
+        }
+        
+        timer.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { _ in
+            NetworkManager.shared.getWeather(for: city) { (model) in
+                for mod in model!.list! {
+                    print(mod.main!.temp!)
+                }
+            }
+        }
+    }
+    
 
 
 }
