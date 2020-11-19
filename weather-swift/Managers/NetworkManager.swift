@@ -18,7 +18,7 @@ class NetworkManager {
         urlComponents.scheme = "https"
         urlComponents.host = "api.openweathermap.org"
         urlComponents.path = "/data/2.5/forecast"
-        urlComponents.queryItems = [URLQueryItem(name: "q", value: city), URLQueryItem(name: "appid", value: "560101761672e21ef08fd8e981a10d86")]
+        urlComponents.queryItems = [URLQueryItem(name: "q", value: city), URLQueryItem(name: "lang", value: "ru"), URLQueryItem(name: "units", value: "metric"), URLQueryItem(name: "appid", value: "560101761672e21ef08fd8e981a10d86")]
         
         var request = URLRequest(url: urlComponents.url!)
         request.httpMethod = "GET"
@@ -31,8 +31,8 @@ class NetworkManager {
                 
                 if data != nil {
                     decoderModel = try? decoder.decode(ResultRequestModel.self, from: data!)
+                    resultClosure(decoderModel)
                 }
-                resultClosure(decoderModel)
             } else {
                 print(error as Any)
             }

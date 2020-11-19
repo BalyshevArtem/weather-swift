@@ -14,4 +14,5 @@ class ResultRequestModel: Codable {
     var cnt: Float?
     var list: [ListResultsReqModel]?
     var city: CityModel?
+    
 }

@@ -11,5 +11,6 @@ import Foundation
 class ListResultsReqModel: Codable {
     var dt: Float?
     var main: MainResultReqModel?
+    var weather: [WeatherReqModel]?
     var dt_txt: String?
 }
