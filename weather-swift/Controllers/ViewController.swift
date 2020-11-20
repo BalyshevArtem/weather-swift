@@ -8,15 +8,21 @@
 
 import UIKit
 
-class RootViewController: UIViewController, UISearchResultsUpdating {
+class RootViewController: UIViewController, UISearchResultsUpdating, UIGestureRecognizerDelegate {
     
     var timer: Timer = Timer()
     var weatherView: WeatherView!
+    var model: ResultRequestModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.setupRootVC()
+        
+        //Добавление перехода к Detail VC
+        let recognizer = UITapGestureRecognizer(target: self, action: #selector(goToDetailVC))
+        recognizer.delegate = self
+        self.weatherView.addGestureRecognizer(recognizer)
     }
     
     fileprivate func setupRootVC() {
@@ -51,6 +57,7 @@ class RootViewController: UIViewController, UISearchResultsUpdating {
         timer = Timer.scheduledTimer(withTimeInterval: 1.5, repeats: false) { _ in
             NetworkManager.shared.getWeather(for: city) { (model) in
                 if let model = model {
+                    self.model = model
                     DispatchQueue.main.async {
                         self.unpackingModelAndUpdateWeatherView(model: model)
                         self.weatherView.isHidden = false
@@ -82,6 +89,13 @@ class RootViewController: UIViewController, UISearchResultsUpdating {
         }
         
         weatherView.updateWeatherView(temperature: Int(temperature ?? -1000), cityName: cityName ?? "Something went wrong", currentWeather: weatherDiscription ?? "Something went wrong", maxTemperature: Int(maxTemp ?? -1000), minTemperature: Int(minTemp ?? -1000), weatherSmile: weatherSmile)
+    }
+    
+    //MARK: - function for switching to a new view controller
+    
+    @objc func goToDetailVC(recognizer: UITapGestureRecognizer) {
+        let detailVC = DetailViewController(model: self.model)
+        self.navigationController?.pushViewController(detailVC, animated: true)
     }
     
 }

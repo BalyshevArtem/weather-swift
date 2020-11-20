@@ -34,10 +34,10 @@ class WeatherView: UIView {
         setupLabel(labelView: weatherDetailLabel, fontSize: 20, text: "")
         constraintForWeatherDetailLabel()
         
-        setupLabel(labelView: cityLabel, fontSize: 29, text: "")
+        setupLabel(labelView: cityLabel, fontSize: 39, text: "")
         constraintForCityLabel()
         
-        setupLabel(labelView: maxMinTemperatureLabel, fontSize: 16, text: "")
+        setupLabel(labelView: maxMinTemperatureLabel, fontSize: 15, text: "")
         constraintForMaxMinTempLabel()
         
         gradientLayer.frame = self.bounds
@@ -65,7 +65,6 @@ class WeatherView: UIView {
         labelView.font = .systemFont(ofSize: fontSize)
         labelView.sizeToFit()
         labelView.textAlignment = .center
-        
         labelView.textColor = .white
         
     }
@@ -124,7 +123,8 @@ class WeatherView: UIView {
         }
         
         if currentWeather == "Clear" {
-            gradientLayer.colors =  [#colorLiteral(red: 0.2484901692, green: 0.6803693342, blue: 1, alpha: 1).cgColor, #colorLiteral(red: 0.01798000393, green: 0.6139364396, blue: 1, alpha: 1).cgColor]
+            //gradientLayer.colors =  [#colorLiteral(red: 0.2484901692, green: 0.6803693342, blue: 1, alpha: 1).cgColor, #colorLiteral(red: 0.01798000393, green: 0.6139364396, blue: 1, alpha: 1).cgColor]
+            gradientLayer.colors = [UIColor.yellow.cgColor, #colorLiteral(red: 0.2484901692, green: 0.6803693342, blue: 1, alpha: 1).cgColor]
             self.layer.insertSublayer(gradientLayer, at: 0)
         } else {
             gradientLayer.colors =  [UIColor.lightGray.cgColor, UIColor.gray.cgColor]
