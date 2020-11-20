@@ -13,15 +13,6 @@ class RootViewController: UIViewController, UISearchResultsUpdating {
     var timer: Timer = Timer()
     var weatherView: WeatherView!
     
-    fileprivate func unpackingModelAndUpdateWeatherView(model: ResultRequestModel) {
-        let cityName = model.city?.name
-        let temperature = model.list?.first?.main?.temp
-        let maxTemp = model.list?.first?.main?.temp_max
-        let minTemp = model.list?.first?.main?.temp_min
-        let weatherDiscription = model.list?.first?.weather?.first?.main
-        weatherView.updateWeatherView(temperature: Int(temperature ?? 0), cityName: cityName ?? "Something went wrong", currentWeather: weatherDiscription ?? "Something went wrong", maxTemperature: Int(maxTemp ?? 0), minTemperature: Int(minTemp ?? 0))
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -44,10 +35,11 @@ class RootViewController: UIViewController, UISearchResultsUpdating {
         
         self.weatherView = WeatherView(frame: CGRect(x: self.view.frame.maxX / 12, y: (self.navigationController!.navigationBar.frame.maxY) + self.view.frame.maxY / 6, width: self.view.frame.maxX - self.view.frame.maxX / 6, height: self.view.frame.maxY - self.navigationController!.navigationBar.frame.maxY - self.view.frame.maxY / 4))
         self.view.addSubview(weatherView)
-    
+        weatherView.isHidden = true
     }
     
     //MARK: - UISearchResultsUpdating
+    
     func updateSearchResults(for searchController: UISearchController) {
         let city = searchController.searchBar.text!
         
@@ -61,10 +53,36 @@ class RootViewController: UIViewController, UISearchResultsUpdating {
                 if let model = model {
                     DispatchQueue.main.async {
                         self.unpackingModelAndUpdateWeatherView(model: model)
+                        self.weatherView.isHidden = false
                     }
                 }
             }
         }
     }
+    
+    //MARK: - function of unpacking our Weather Model and update weather view
+    
+    fileprivate func unpackingModelAndUpdateWeatherView(model: ResultRequestModel) {
+        let cityName = model.city?.name
+        let temperature = model.list?.first?.main?.temp
+        let maxTemp = model.list?.first?.main?.temp_max
+        let minTemp = model.list?.first?.main?.temp_min
+        let weatherDiscription = model.list?.first?.weather?.first?.main
+        var weatherSmile = ""
+        
+        switch weatherDiscription {
+        case "Clouds":
+            weatherSmile = WeatherSmileEnum.clouds.rawValue
+        case "Rain":
+            weatherSmile = WeatherSmileEnum.rain.rawValue
+        case "Clear":
+            weatherSmile = WeatherSmileEnum.clear.rawValue
+        default:
+            weatherSmile = ""
+        }
+        
+        weatherView.updateWeatherView(temperature: Int(temperature ?? -1000), cityName: cityName ?? "Something went wrong", currentWeather: weatherDiscription ?? "Something went wrong", maxTemperature: Int(maxTemp ?? -1000), minTemperature: Int(minTemp ?? -1000), weatherSmile: weatherSmile)
+    }
+    
 }
 

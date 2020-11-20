@@ -12,9 +12,10 @@ class WeatherView: UIView {
     var cityLabel = UILabel()
     var weatherDetailLabel = UILabel()
     var temperatureLabel = UILabel()
+    var gradusSignLabel = UILabel()
     var maxMinTemperatureLabel = UILabel()
-
     var weatherSmileLabel = UILabel()
+    var gradientLayer = CAGradientLayer()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -22,10 +23,13 @@ class WeatherView: UIView {
         self.layer.cornerRadius = 16
         self.clipsToBounds = true
         
-        setupWeatherSmileLavel()
+        setupWeatherSmileLabel()
         
         setupLabel(labelView: temperatureLabel, fontSize: 90, text: "")
         constraintForTempLabel()
+        
+        setupLabel(labelView: gradusSignLabel, fontSize: 80, text: "º")
+        constraintForGradusSignLabel()
         
         setupLabel(labelView: weatherDetailLabel, fontSize: 20, text: "")
         constraintForWeatherDetailLabel()
@@ -33,21 +37,22 @@ class WeatherView: UIView {
         setupLabel(labelView: cityLabel, fontSize: 29, text: "")
         constraintForCityLabel()
         
-        setupLabel(labelView: maxMinTemperatureLabel, fontSize: 19, text: "")
+        setupLabel(labelView: maxMinTemperatureLabel, fontSize: 16, text: "")
         constraintForMaxMinTempLabel()
         
-        
-        let gradientLayer = CAGradientLayer()
         gradientLayer.frame = self.bounds
-        gradientLayer.colors =  [UIColor.gray.cgColor, UIColor.lightGray.cgColor]
-        self.layer.insertSublayer(gradientLayer, at: 0)
-        
     }
     
-    fileprivate func setupWeatherSmileLavel() {
+    required init?(coder: NSCoder) {
+           fatalError("init(coder:) has not been implemented")
+       }
+    
+    //MARK: - Set up labelsView
+    
+    fileprivate func setupWeatherSmileLabel() {
         weatherSmileLabel.numberOfLines = 2
         weatherSmileLabel.lineBreakMode = .byCharWrapping
-        weatherSmileLabel.text = "💧💧💧💧💧💧💧💧💧💧💧💧💧💧💧💧💧💧💧💧💧💧"
+        weatherSmileLabel.text = ""
         weatherSmileLabel.font = .systemFont(ofSize: 25)
         weatherSmileLabel.frame = CGRect(x: self.bounds.origin.x, y: self.bounds.origin.y, width: self.bounds.width, height: self.bounds.height / 6)
         self.addSubview(weatherSmileLabel)
@@ -63,6 +68,16 @@ class WeatherView: UIView {
         
         labelView.textColor = .white
         
+    }
+    
+    
+    //MARK: - Set up constraints for all labels
+    
+    fileprivate func constraintForGradusSignLabel() {
+        gradusSignLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        gradusSignLabel.leftAnchor.constraint(equalTo: temperatureLabel.rightAnchor).isActive = true
+        gradusSignLabel.centerYAnchor.constraint(equalTo: temperatureLabel.centerYAnchor).isActive = true
     }
     
     fileprivate func constraintForCityLabel() {
@@ -93,30 +108,27 @@ class WeatherView: UIView {
         maxMinTemperatureLabel.centerYAnchor.constraint(equalTo: temperatureLabel.centerYAnchor, constant: self.frame.maxY / 8).isActive = true
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
-    public func updateWeatherView(temperature: Int, cityName: String, currentWeather: String, maxTemperature: Int, minTemperature: Int) {
-        temperatureLabel.text = String(temperature) + "º"
+    //MARK: - function of updating our view with new weather data
+    
+    public func updateWeatherView(temperature: Int, cityName: String, currentWeather: String, maxTemperature: Int, minTemperature: Int, weatherSmile: String) {
+        temperatureLabel.text = String(temperature)
         maxMinTemperatureLabel.text = "max: " + String(maxTemperature) + "º" + ", min: " + String(minTemperature) + "º"
         cityLabel.text = cityName
+        let previousWeatherDetailText = weatherDetailLabel.text!
         weatherDetailLabel.text = currentWeather
+        weatherSmileLabel.text = weatherSmile
+        
+        guard (previousWeatherDetailText != currentWeather) && (currentWeather == "Clear" || previousWeatherDetailText == "Clear") || (previousWeatherDetailText == "") else {
+            return
+        }
+        
+        if currentWeather == "Clear" {
+            gradientLayer.colors =  [#colorLiteral(red: 0.2484901692, green: 0.6803693342, blue: 1, alpha: 1).cgColor, #colorLiteral(red: 0.01798000393, green: 0.6139364396, blue: 1, alpha: 1).cgColor]
+            self.layer.insertSublayer(gradientLayer, at: 0)
+        } else {
+            gradientLayer.colors =  [UIColor.lightGray.cgColor, UIColor.gray.cgColor]
+            self.layer.insertSublayer(gradientLayer, at: 0)
+        }
     }
-    
-//    fileprivate func animateWeatherSmileLabel() {
-//        let startFrame = self.weatherSmileLabel.frame
-//        UIView.animate(withDuration: 2, delay: 0.0, options: .curveLinear, animations: {
-//            var rainFrame = self.weatherSmileLabel.frame
-//            rainFrame.origin.y = self.frame.maxY
-//
-//            self.weatherSmileLabel.frame = rainFrame
-//
-//        }) { finished in
-//            self.weatherSmileLabel.frame = startFrame
-//            self.animateWeatherSmileLabel()
-//        }
-//
-//    }
-    
 }
