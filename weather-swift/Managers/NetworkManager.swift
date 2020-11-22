@@ -30,7 +30,6 @@ class NetworkManager {
         request.httpMethod = "GET"
         
         if let cashedModel = modelsCache.object(forKey: urlComponents.url!.absoluteString as NSString) {
-            print("cash this: \(cashedModel.city!.name!)")
             resultClosure(cashedModel, 200)
             return
         }
