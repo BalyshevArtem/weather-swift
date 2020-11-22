@@ -12,7 +12,6 @@ class DetailTableViewCell: UITableViewCell {
     var dateWeatherLabel = UILabel()
     var smileWeatherLabel = UILabel()
     var temperaturesLabel = UILabel()
-  //  var minTemperatureLabel = UILabel()
 
     override var reuseIdentifier: String? {
         return "DetailTableViewCell"
@@ -22,14 +21,14 @@ class DetailTableViewCell: UITableViewCell {
         super.awakeFromNib()
 
         setupLabel(labelView: dateWeatherLabel, fontSize: 20, text: "")
-        setupLabel(labelView: smileWeatherLabel, fontSize: 20, text: "")
-        setupLabel(labelView: temperaturesLabel, fontSize: 20, text: "")
+        setupLabel(labelView: smileWeatherLabel, fontSize: 29, text: "")
+        setupLabel(labelView: temperaturesLabel, fontSize: 22, text: "")
         
         constraintsForDateWeatherLabel()
         constraintsForSmileWeatherLabel()
         constraintsForTemperaturesWeatherLabel()
         
-        self.backgroundColor = .gray
+        self.backgroundColor = .clear
     }
   
 
@@ -47,7 +46,7 @@ class DetailTableViewCell: UITableViewCell {
     //MARK: - constraints for labels
     
     fileprivate func constraintsForDateWeatherLabel() {
-        dateWeatherLabel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 15).isActive = true
+        dateWeatherLabel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: self.frame.width / 20).isActive = true
         dateWeatherLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
     }
     
@@ -57,7 +56,7 @@ class DetailTableViewCell: UITableViewCell {
     }
     
     fileprivate func constraintsForTemperaturesWeatherLabel() {
-        temperaturesLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -15).isActive = true
+        temperaturesLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -self.frame.width / 10).isActive = true
         temperaturesLabel.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
     }
     

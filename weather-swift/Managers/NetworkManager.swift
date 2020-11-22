@@ -7,38 +7,43 @@
 //
 
 import Foundation
+import Network
 
 class NetworkManager {
-    private init() {}
-    
     static let shared: NetworkManager = NetworkManager()
-    
-    func getWeather(for city: String, resultClosure: @escaping ( (ResultRequestModel?)->() )) {
+
+    private init() {}
+        
+    public func getWeather(for city: String, resultClosure: @escaping ( (ResultRequestModel?, Int?)->() )) {
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
         urlComponents.host = "api.openweathermap.org"
         urlComponents.path = "/data/2.5/forecast"
-        urlComponents.queryItems = [URLQueryItem(name: "q", value: city), URLQueryItem(name: "lang", value: "ru"), URLQueryItem(name: "units", value: "metric"), URLQueryItem(name: "appid", value: "560101761672e21ef08fd8e981a10d86")]
+        urlComponents.queryItems = [URLQueryItem(name: "q", value: city),
+                                    URLQueryItem(name: "lang", value: "ru"),
+                                    URLQueryItem(name: "units", value: "metric"),
+                                    URLQueryItem(name: "appid", value: "560101761672e21ef08fd8e981a10d86")]
         
         var request = URLRequest(url: urlComponents.url!)
         request.httpMethod = "GET"
         
         let task = URLSession(configuration: .default)
         let dataTask = task.dataTask(with: request) { (data, response, error) in
+            let statusCode = (response as? HTTPURLResponse)?.statusCode
+            
             if error == nil {
                 let decoder = JSONDecoder()
                 var decoderModel: ResultRequestModel?
                 
                 if data != nil {
                     decoderModel = try? decoder.decode(ResultRequestModel.self, from: data!)
-                    resultClosure(decoderModel)
+                    resultClosure(decoderModel, statusCode)
                 }
             } else {
-                print(error as Any)
+                    resultClosure(nil, statusCode)
             }
         }
         
         dataTask.resume()
-    
     }
 }

@@ -28,7 +28,7 @@ class WeatherView: UIView {
         setupLabel(labelView: temperatureLabel, fontSize: 90, text: "")
         constraintForTempLabel()
         
-        setupLabel(labelView: gradusSignLabel, fontSize: 80, text: "º")
+        setupLabel(labelView: gradusSignLabel, fontSize: 79, text: "º")
         constraintForGradusSignLabel()
         
         setupLabel(labelView: weatherDetailLabel, fontSize: 20, text: "")
@@ -47,14 +47,18 @@ class WeatherView: UIView {
            fatalError("init(coder:) has not been implemented")
        }
     
-    //MARK: - Set up labelsView
+    //MARK: - Set up labelsView and smileLabel
     
     fileprivate func setupWeatherSmileLabel() {
         weatherSmileLabel.numberOfLines = 2
         weatherSmileLabel.lineBreakMode = .byCharWrapping
         weatherSmileLabel.text = ""
         weatherSmileLabel.font = .systemFont(ofSize: 25)
-        weatherSmileLabel.frame = CGRect(x: self.bounds.origin.x, y: self.bounds.origin.y, width: self.bounds.width, height: self.bounds.height / 6)
+        weatherSmileLabel.frame = CGRect(x: self.bounds.origin.x,
+                                         y: self.bounds.origin.y,
+                                         width: self.bounds.width,
+                                         height: self.bounds.height / 6)
+        
         self.addSubview(weatherSmileLabel)
     }
     
@@ -123,7 +127,6 @@ class WeatherView: UIView {
         }
         
         if currentWeather == "Clear" {
-            //gradientLayer.colors =  [#colorLiteral(red: 0.2484901692, green: 0.6803693342, blue: 1, alpha: 1).cgColor, #colorLiteral(red: 0.01798000393, green: 0.6139364396, blue: 1, alpha: 1).cgColor]
             gradientLayer.colors = [UIColor.yellow.cgColor, #colorLiteral(red: 0.2484901692, green: 0.6803693342, blue: 1, alpha: 1).cgColor]
             self.layer.insertSublayer(gradientLayer, at: 0)
         } else {
