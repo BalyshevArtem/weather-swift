@@ -13,6 +13,8 @@ class NetworkManager {
     static let shared: NetworkManager = NetworkManager()
 
     private init() {}
+    
+    fileprivate var modelsCache = NSCache<NSString, ResultRequestModel>()
         
     public func getWeather(for city: String, resultClosure: @escaping ( (ResultRequestModel?, Int?)->() )) {
         var urlComponents = URLComponents()
@@ -27,6 +29,12 @@ class NetworkManager {
         var request = URLRequest(url: urlComponents.url!)
         request.httpMethod = "GET"
         
+        if let cashedModel = modelsCache.object(forKey: urlComponents.url!.absoluteString as NSString) {
+            print("cash this: \(cashedModel.city!.name!)")
+            resultClosure(cashedModel, 200)
+            return
+        }
+        
         let task = URLSession(configuration: .default)
         let dataTask = task.dataTask(with: request) { (data, response, error) in
             let statusCode = (response as? HTTPURLResponse)?.statusCode
@@ -37,6 +45,9 @@ class NetworkManager {
                 
                 if data != nil {
                     decoderModel = try? decoder.decode(ResultRequestModel.self, from: data!)
+                    if decoderModel != nil {
+                        self.modelsCache.setObject(decoderModel!, forKey: request.url!.absoluteString as NSString)
+                    }
                     resultClosure(decoderModel, statusCode)
                 }
             } else {
